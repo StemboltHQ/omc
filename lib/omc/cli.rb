@@ -12,6 +12,7 @@ module Omc
 
       ops_stack = get_by_name ops.describe_stacks[:stacks], stack
       instances = ops.describe_instances(stack_id: ops_stack[:stack_id])[:instances]
+      instances.reject!{|i| i[:status] != "online" }
       instance = instances.first
       system "ssh #{user.name}@#{instance[:public_ip]}"
     end
