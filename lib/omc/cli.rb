@@ -14,7 +14,7 @@ module Omc
       instances = ops.describe_instances(stack_id: ops_stack[:stack_id])[:instances]
       instances.reject!{|i| i[:status] != "online" }
       instance = instances.first || abort("No running instances")
-      system "ssh #{user.name}@#{instance[:public_ip]}"
+      exec "ssh", "#{user.name}@#{instance[:public_ip]}"
     end
 
     private
