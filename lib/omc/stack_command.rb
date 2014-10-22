@@ -13,10 +13,19 @@ module Omc
 
     def console
       app = applications.first
-      exec 'ssh', '-t', ssh_host, "sudo su deploy -c 'cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c'"
+      ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
+    end
+
+    def db
+      app = applications.first
+      ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
     private
+    def ssh_and_execute(command)
+      exec 'ssh', '-t', ssh_host, "sudo su deploy -c '#{command}'"
+    end
+
     def applications
       ops.describe_apps(stack_id: stack[:stack_id])[:apps]
     end

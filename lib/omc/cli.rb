@@ -17,6 +17,12 @@ module Omc
       command.console
     end
 
+    desc 'db', 'Connect and run the database client on the given stack'
+    def db(account, stack)
+      command = StackCommand.new(user(account), stack)
+      command.db
+    end
+
     private
     def user(account)
       iam_account = vault.account(account) || abort("Account #{account.inspect} not configured")
