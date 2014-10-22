@@ -6,7 +6,7 @@ require "omc/stack_command"
 module Omc
   class Cli < Thor
     desc 'ssh', 'Connect to an instance on a stack on an account'
-    def ssh(account_name, stack)
+    def ssh(account, stack)
       command = StackCommand.new(user(account), stack)
       command.ssh
     end
