@@ -1,31 +1,36 @@
-# Omc
+# Omc - Opsworks Missing Console
 
-TODO: Write a gem description
+Useful commands for dealing with AWS and opsworks across multiple IAM accounts.
+
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'omc'
+```
+gem install omc
 ```
 
-And then execute:
+### Aws Cred Vault
 
-    $ bundle
+omc works off of [aws_cred_vault](www.github.com/cbrunsdon/aws_cred_vault) and requires a ~/.aws_cred_vault file to exist. This file should be populated with your different IAM accounts and users.
 
-Or install it yourself as:
+Below is an example of a valid ~/.aws_cred_vault
 
-    $ gem install omc
+```toml
+[accounts.protoss.fenix]
+access_key = "fenix"
+secret = "zealot!"
+
+[accounts.protoss.tassadar]
+access_key = "tassadar"
+secret = "lightning!"
+
+[accounts.terran.raynor]
+access_key = "raynor"
+secret = "abcd1234"
+```
 
 ## Usage
 
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/omc/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+```
+omc help
+```
