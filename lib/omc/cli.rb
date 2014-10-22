@@ -18,7 +18,7 @@ module Omc
 
     private
     def vault
-      AwsCredVault::Toml.new File.join(ENV['HOME'], '.shoelaces')
+      AwsCredVault::Toml.new File.join(ENV['HOME'], '.aws_cred_vault')
     end
 
     def get_by_name collection, name
