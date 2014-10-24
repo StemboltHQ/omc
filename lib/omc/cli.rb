@@ -8,19 +8,19 @@ module Omc
   class Cli < Thor
     class_option :account, aliases: '-a', optional: true
 
-    desc 'ssh', 'Connect to an instance on a stack on an account'
+    desc 'ssh STACK', 'Connect to an instance on a stack on an account'
     def ssh(stack)
       command = StackCommand.new(user, stack)
       command.ssh
     end
 
-    desc 'console', 'Run a rails console on the given stack'
+    desc 'console STACK', 'Run a rails console on the given stack'
     def console(stack)
       command = StackCommand.new(user, stack)
       command.console
     end
 
-    desc 'db', 'Connect and run the database client on the given stack'
+    desc 'db STACK', 'Connect and run the database client on the given stack'
     def db(stack)
       command = StackCommand.new(user, stack)
       command.db
