@@ -28,6 +28,12 @@ module Omc
       command.db
     end
 
+    desc 'status STACK', 'Show the instance status for the given stack'
+    def status(stack)
+      command = StackCommand.new(user, stack, options[:app])
+      command.status(self)
+    end
+
     private
     def user
       iam_account = vault.account(account) || abort("Account #{account.inspect} not configured")

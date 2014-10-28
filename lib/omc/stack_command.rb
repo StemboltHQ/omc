@@ -21,6 +21,20 @@ module Omc
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
+    def status(thor)
+      details = stack.instances.map do |i|
+        [
+          i[:hostname],
+          i[:instance_type],
+          i[:status],
+          i[:availability_zone],
+          i[:ec2_instance_id],
+          i[:public_ip],
+        ]
+      end
+      thor.print_table(details)
+    end
+
     private
     def ssh_and_execute(command)
       exec 'ssh', '-t', ssh_host, "sudo su deploy -c '#{command}'"
