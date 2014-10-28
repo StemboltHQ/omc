@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Omc
   class Instance
     attr_reader :stack, :attributes

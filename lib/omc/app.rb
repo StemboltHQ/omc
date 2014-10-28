@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Omc
   class App
     attr_reader :stack, :attributes

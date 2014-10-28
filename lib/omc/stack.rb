@@ -1,5 +1,6 @@
 require 'omc/instances'
 require 'omc/app'
+require 'forwardable'
 
 module Omc
   class Stack
