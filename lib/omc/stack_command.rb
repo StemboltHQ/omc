@@ -3,9 +3,10 @@ require 'omc/account'
 
 module Omc
   class StackCommand
-    def initialize user, stack_name
+    def initialize user, stack_name, app_name=nil
       @user = user
       @stack_name = stack_name
+      @app_name = app_name
     end
 
     def ssh
@@ -13,12 +14,10 @@ module Omc
     end
 
     def console
-      app = applications.first
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
     end
 
     def db
-      app = applications.first
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
@@ -27,8 +26,12 @@ module Omc
       exec 'ssh', '-t', ssh_host, "sudo su deploy -c '#{command}'"
     end
 
-    def applications
-      stack.apps
+    def app
+      if @app_name
+        get_by_name(stack.apps, @app_name)
+      else
+        stack.apps.first
+      end
     end
 
     def instance

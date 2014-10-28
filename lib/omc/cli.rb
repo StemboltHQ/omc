@@ -15,14 +15,16 @@ module Omc
     end
 
     desc 'console STACK', 'Run a rails console on the given stack'
+    method_option :app
     def console(stack)
-      command = StackCommand.new(user, stack)
+      command = StackCommand.new(user, stack, options[:app])
       command.console
     end
 
     desc 'db STACK', 'Connect and run the database client on the given stack'
+    method_option :app
     def db(stack)
-      command = StackCommand.new(user, stack)
+      command = StackCommand.new(user, stack, options[:app])
       command.db
     end
 
