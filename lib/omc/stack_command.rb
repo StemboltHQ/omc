@@ -1,10 +1,12 @@
 require 'aws-sdk'
+require 'omc/account'
 
 module Omc
   class StackCommand
-    def initialize user, stack_name
+    def initialize user, stack_name, app_name=nil
       @user = user
       @stack_name = stack_name
+      @app_name = app_name
     end
 
     def ssh
@@ -12,13 +14,25 @@ module Omc
     end
 
     def console
-      app = applications.first
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
     end
 
     def db
-      app = applications.first
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
+    end
+
+    def status(thor)
+      details = stack.instances.map do |i|
+        [
+          i[:hostname],
+          i[:instance_type],
+          i[:status],
+          i[:availability_zone],
+          i[:ec2_instance_id],
+          i[:public_ip],
+        ]
+      end
+      thor.print_table(details)
     end
 
     private
@@ -26,26 +40,28 @@ module Omc
       exec 'ssh', '-t', ssh_host, "sudo su deploy -c '#{command}'"
     end
 
-    def applications
-      ops.describe_apps(stack_id: stack[:stack_id])[:apps]
+    def app
+      if @app_name
+        get_by_name(stack.apps, @app_name)
+      else
+        stack.apps.first
+      end
     end
 
     def instance
-      instances = ops.describe_instances(stack_id: stack[:stack_id])[:instances]
-      instances.reject!{|i| i[:status] != "online" }
-      instance = instances.first || abort("No running instances")
+      stack.instances.detect(&:online?) || abort("No running instances")
     end
 
     def ssh_host
       "#{@user.name}@#{instance[:public_ip]}"
     end
 
-    def ops
-      @ops ||= ::AWS::OpsWorks::Client.new @user.credentials
+    def account
+      @account ||= Omc::Account.new(@user.credentials)
     end
 
     def stack
-      @stack ||= get_by_name ops.describe_stacks[:stacks], @stack_name
+      @stack ||= get_by_name(account.stacks, @stack_name)
     end
 
     def get_by_name collection, name
