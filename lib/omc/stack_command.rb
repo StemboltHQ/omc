@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'omc/account'
 
 module Omc
   class StackCommand
@@ -27,25 +28,23 @@ module Omc
     end
 
     def applications
-      ops.describe_apps(stack_id: stack[:stack_id])[:apps]
+      stack.apps
     end
 
     def instance
-      instances = ops.describe_instances(stack_id: stack[:stack_id])[:instances]
-      instances.reject!{|i| i[:status] != "online" }
-      instance = instances.first || abort("No running instances")
+      stack.instances.detect(&:online?) || abort("No running instances")
     end
 
     def ssh_host
       "#{@user.name}@#{instance[:public_ip]}"
     end
 
-    def ops
-      @ops ||= ::AWS::OpsWorks::Client.new @user.credentials
+    def account
+      @account ||= Omc::Account.new(@user.credentials)
     end
 
     def stack
-      @stack ||= get_by_name ops.describe_stacks[:stacks], @stack_name
+      @stack ||= get_by_name(account.stacks, @stack_name)
     end
 
     def get_by_name collection, name
