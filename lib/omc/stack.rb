@@ -1,5 +1,6 @@
 require 'omc/instances'
 require 'omc/app'
+require 'omc/layer'
 require 'forwardable'
 
 module Omc
@@ -15,8 +16,9 @@ module Omc
       @attributes = attributes
     end
 
-    def instances
-      @instances ||= client.describe_instances(stack_id: self[:stack_id])[:instances].map do |instance|
+    def instances layer_id: nil
+      options = layer_id.nil? ? Hash[stack_id: self[:stack_id]] : Hash[layer_id: layer_id]
+      @instances ||= client.describe_instances(options)[:instances].map do |instance|
         ::Omc::Instance.new(self, instance)
       end
     end
@@ -24,6 +26,12 @@ module Omc
     def apps
       @apps ||= client.describe_apps(stack_id: self[:stack_id])[:apps].map do |app|
         ::Omc::App.new(self, app)
+      end
+    end
+
+    def layers
+      @layers ||= client.describe_layers(stack_id: self[:stack_id])[:layers].map do |layer|
+        ::Omc::Layer.new(self, layer)
       end
     end
   end

@@ -7,30 +7,31 @@ require "omc/config"
 module Omc
   class Cli < Thor
     class_option :account, aliases: '-a', optional: true
+    class_option :layer, aliases: '-l', optional: true
 
     desc 'ssh STACK', 'Connect to an instance on a stack on an account'
     def ssh(stack)
-      command = StackCommand.new(user, stack)
+      command = StackCommand.new(user, stack, layer: options[:layer])
       command.ssh
     end
 
     desc 'console STACK', 'Run a rails console on the given stack'
     method_option :app
     def console(stack)
-      command = StackCommand.new(user, stack, options[:app])
+      command = StackCommand.new(user, stack, app: options[:app], layer: options[:layer])
       command.console
     end
 
     desc 'db STACK', 'Connect and run the database client on the given stack'
     method_option :app
     def db(stack)
-      command = StackCommand.new(user, stack, options[:app])
+      command = StackCommand.new(user, stack, app: options[:app], layer: options[:layer])
       command.db
     end
 
     desc 'status STACK', 'Show the instance status for the given stack'
     def status(stack)
-      command = StackCommand.new(user, stack, options[:app])
+      command = StackCommand.new(user, stack, app: options[:app], layer: options[:layer])
       command.status(self)
     end
 

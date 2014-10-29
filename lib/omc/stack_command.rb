@@ -3,10 +3,11 @@ require 'omc/account'
 
 module Omc
   class StackCommand
-    def initialize user, stack_name, app_name=nil
+    def initialize user, stack_name, app: nil, layer: nil
       @user = user
       @stack_name = stack_name
-      @app_name = app_name
+      @app_name = app
+      @layer_name = layer
     end
 
     def ssh
@@ -49,7 +50,9 @@ module Omc
     end
 
     def instance
-      stack.instances.detect(&:online?) || abort("No running instances")
+      layer_id = @layer_name ? stack.layers.detect{ |l| l[:shortname] == @layer_name }[:layer_id] : nil
+      instances = stack.instances(layer_id: layer_id)
+      instances.detect(&:online?) || abort("No running instances")
     end
 
     def ssh_host
