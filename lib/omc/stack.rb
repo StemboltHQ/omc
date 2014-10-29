@@ -17,7 +17,7 @@ module Omc
     end
 
     def instances layer_id: nil
-      options = layer_id.nil? ? Hash[stack_id: self[:stack_id]] : Hash[layer_id: layer_id]
+      options = layer_id.nil? ? {stack_id: self[:stack_id]} : {layer_id: layer_id}
       @instances ||= client.describe_instances(options)[:instances].map do |instance|
         ::Omc::Instance.new(self, instance)
       end
