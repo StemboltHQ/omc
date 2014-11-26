@@ -58,9 +58,14 @@ module Omc
       end
     end
 
+    def layer
+      if @layer_name
+        get_by_name(stack.layers, @layer_name, key: :shortname)
+      end
+    end
+
     def instance
-      layer_id = @layer_name ? stack.layers.detect{ |l| l[:shortname] == @layer_name }[:layer_id] : nil
-      instances = stack.instances(layer_id: layer_id)
+      instances = layer ? layer.instances : stack.instances
       instances.detect(&:online?) || abort("No running instances")
     end
 
@@ -76,10 +81,10 @@ module Omc
       @stack ||= get_by_name(account.stacks, @stack_name)
     end
 
-    def get_by_name collection, name
+    def get_by_name collection, name, key: :name
       collection.detect do |x|
-        x[:name] == name
-      end || abort("Can't find #{name.inspect} among #{collection.map{|x| x[:name] }.inspect}")
+        x[key] == name
+      end || abort("Can't find #{name.inspect} among #{collection.map{|x| x[key] }.inspect}")
     end
   end
 end
