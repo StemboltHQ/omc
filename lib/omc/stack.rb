@@ -34,5 +34,18 @@ module Omc
         ::Omc::Layer.new(self, layer)
       end
     end
+
+    def execute_recipes(app, recipes: [], name: "execute_recipes")
+      client.create_deployment(
+        stack_id: self[:stack_id],
+        app_id: app[:app_id],
+        command: {
+          name: name,
+          args: {
+            "recipes" => recipes
+          }
+        }
+      )
+    end
   end
 end

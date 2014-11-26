@@ -29,6 +29,13 @@ module Omc
       command.db
     end
 
+    desc 'unicorn ACTION STACK', 'Connect and run the given action on the unicorns'
+    method_option :app
+    def unicorn(action, stack)
+      command = StackCommand.new(user, stack, app: options[:app])
+      command.unicorn(action)
+    end
+
     desc 'status STACK', 'Show the instance status for the given stack'
     def status(stack)
       command = StackCommand.new(user, stack, app: options[:app], layer: options[:layer])

@@ -22,6 +22,15 @@ module Omc
       ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
+    def unicorn(action)
+      case action
+      when "restart"
+        stack.execute_recipes(app, recipes: ["deploy::rails-restart"], name: "restart")
+      else
+        abort("Unicorn action should be one of [restart]")
+      end
+    end
+
     def status(thor)
       details = stack.instances.map do |i|
         [
