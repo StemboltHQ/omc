@@ -12,5 +12,11 @@ module Omc
       @stack = stack
       @attributes = attributes
     end
+
+    def instances
+      @instances ||= @stack.instances.select do |i|
+        i[:layer_ids].include? self[:layer_id]
+      end
+    end
   end
 end
