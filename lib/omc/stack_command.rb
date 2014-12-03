@@ -15,11 +15,11 @@ module Omc
     end
 
     def console
-      ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
+      ssh_and_execute "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
     end
 
     def db
-      ssh_and_execute "cd /srv/www/#{app[:name]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
+      ssh_and_execute "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
     def unicorn(action)
