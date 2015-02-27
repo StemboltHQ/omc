@@ -10,7 +10,7 @@ module Omc
 
     def stacks
       @stacks ||= client.describe_stacks[:stacks].map do |stack|
-        ::Omc::Stack.new(self, stack)
+        Stack.new(self, stack)
       end
     end
   end

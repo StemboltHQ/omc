@@ -17,21 +17,15 @@ module Omc
     end
 
     def instances
-      @instances ||= client.describe_instances(stack_id: self[:stack_id])[:instances].map do |instance|
-        ::Omc::Instance.new(self, instance)
-      end
+      @instances ||= describe(:instances).map{ |instance| Instance.new(self, instance) }
     end
 
     def apps
-      @apps ||= client.describe_apps(stack_id: self[:stack_id])[:apps].map do |app|
-        ::Omc::App.new(self, app)
-      end
+      @apps ||= describe(:apps).map{ |app| App.new(self, app) }
     end
 
     def layers
-      @layers ||= client.describe_layers(stack_id: self[:stack_id])[:layers].map do |layer|
-        ::Omc::Layer.new(self, layer)
-      end
+      @layers ||= describe(:layers).map{ |layer| Layer.new(self, layer) }
     end
 
     def execute_recipes(app, recipes: [], name: "execute_recipes")
@@ -45,6 +39,12 @@ module Omc
           }
         }
       )
+    end
+
+    private
+
+    def describe(object)
+      client.public_send("describe_#{object}", stack_id: self[:stack_id])[object]
     end
   end
 end
