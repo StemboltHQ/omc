@@ -70,7 +70,9 @@ module Omc
     end
 
     def ssh_host
-      "#{@user.name}@#{instance[:public_ip]}"
+      host = "#{@user.name}@#{instance[:public_ip]}"
+      puts "Connecting to #{host}"
+      host
     end
 
     def account
