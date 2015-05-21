@@ -15,11 +15,11 @@ module Omc
     end
 
     def console
-      ssh_and_execute "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
+      ssh_and_execute_as_deploy "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails c"
     end
 
     def db
-      ssh_and_execute "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
+      ssh_and_execute_as_deploy "cd /srv/www/#{app[:shortname]}/current && RAILS_ENV=#{app[:attributes]['RailsEnv']} bundle exec rails db -p"
     end
 
     def unicorn(action)
@@ -45,9 +45,14 @@ module Omc
       thor.print_table(details)
     end
 
-    private
     def ssh_and_execute(command)
-      exec 'ssh', '-t', ssh_host, "sudo su deploy -c '#{command}'"
+      puts "Executing '#{command}'"
+      exec 'ssh', '-t', ssh_host, command
+    end
+
+    private
+    def ssh_and_execute_as_deploy(command)
+      ssh_and_execute "sudo su deploy -c '#{command}'"
     end
 
     def app
