@@ -3,7 +3,8 @@ require 'omc/account'
 
 module Omc
   class StackCommand
-    def initialize user, stack_name, app: nil, layer: nil
+    def initialize aws_account, user, stack_name, app: nil, layer: nil
+      @aws_account = aws_account
       @user = user
       @stack_name = stack_name
       @app_name = app
@@ -11,7 +12,7 @@ module Omc
     end
 
     def ssh
-      exec "ssh", ssh_host
+      exec "ssh", *([ssh_host] + default_ssh_args)
     end
 
     def console
@@ -40,6 +41,7 @@ module Omc
           i[:availability_zone],
           i[:ec2_instance_id],
           i[:public_ip],
+          i[:private_ip],
         ]
       end
       thor.print_table(details)
@@ -47,7 +49,9 @@ module Omc
 
     def ssh_and_execute(command)
       puts "Executing '#{command}'"
-      exec 'ssh', '-t', ssh_host, command
+      args = default_ssh_args + ['-t', ssh_host, command]
+
+      exec 'ssh', *args
     end
 
     private
@@ -75,7 +79,8 @@ module Omc
     end
 
     def ssh_host
-      host = "#{@user.name}@#{instance[:public_ip]}"
+      ip_address = bastion ? instance[:private_ip] : instance[:public_ip]
+      host = "#{@user.name}@#{ip_address}"
       puts "Connecting to #{host}"
       host
     end
@@ -86,6 +91,14 @@ module Omc
 
     def stack
       @stack ||= get_by_name(account.stacks, @stack_name)
+    end
+
+    def bastion
+      @aws_account.bastions.detect { |y| y.name == @stack_name }
+    end
+
+    def default_ssh_args
+      bastion ? [ '-o', "ProxyCommand ssh -W %h:%p #{bastion.host}" ] : []
     end
 
     def get_by_name collection, name, key: :name
