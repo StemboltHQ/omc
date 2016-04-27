@@ -6,12 +6,19 @@ require "omc/config"
 
 module Omc
   class Cli < Thor
-    class_option :account, aliases: '-a', optional: true
-    class_option :layer, aliases: '-l', optional: true
+    class_option :account, aliases: '-a'
+    class_option :layer, aliases: '-l'
+    class_option :forward_agent, aliases: "-A", type: :boolean, default: false
 
     desc 'ssh STACK', 'Connect to an instance on a stack on an account'
     def ssh(stack)
-      command = StackCommand.new(aws_account, user, stack, layer: options[:layer])
+      command = StackCommand.new(
+        aws_account,
+        user,
+        stack,
+        layer: options[:layer],
+        forward_agent: options[:forward_agent]
+      )
       command.ssh
     end
 
