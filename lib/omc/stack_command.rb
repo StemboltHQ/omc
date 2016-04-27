@@ -3,12 +3,13 @@ require 'omc/account'
 
 module Omc
   class StackCommand
-    def initialize aws_account, user, stack_name, app: nil, layer: nil
+    def initialize aws_account, user, stack_name, app: nil, layer: nil, forward_agent: false
       @aws_account = aws_account
       @user = user
       @stack_name = stack_name
       @app_name = app
       @layer_name = layer
+      @forward_agent = forward_agent
     end
 
     def ssh
@@ -98,7 +99,10 @@ module Omc
     end
 
     def default_ssh_args
-      bastion ? [ '-o', "ProxyCommand ssh -W %h:%p #{bastion.host}" ] : []
+      [].tap do |args|
+        args.push("-o", "ProxyCommand ssh -W %h:%p #{bastion.host}") if bastion
+        args.push("-A") if @forward_agent
+      end
     end
 
     def get_by_name collection, name, key: :name
