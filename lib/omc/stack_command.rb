@@ -101,9 +101,11 @@ module Omc
 
     def default_ssh_args
       [].tap do |args|
-        proxy_command = "ProxyCommand ssh -W %h:%p #{bastion.host}"
-        proxy_command += " -R #{@remote_forward}" if @remote_forward
-        args.push("-o", proxy_command) if bastion
+        if (bastion)
+          proxy_command = "ProxyCommand ssh -W %h:%p #{bastion.host}"
+          proxy_command += " -R #{@remote_forward}" if @remote_forward
+          args.push("-o", proxy_command)
+        end
         args.push("-A") if @forward_agent
         args.push("-R #{@remote_forward}") if @remote_forward
       end

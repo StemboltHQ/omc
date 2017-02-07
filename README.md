@@ -34,3 +34,11 @@ secret = "abcd1234"
 ```
 omc help
 ```
+
+Accepted ssh options:
+```
+-R 3000:localhost:3001 # Forwards port 3000 on the remote host to port 3001 on the localhost
+-A                     # Forward agent
+```
+
+Please the the ssh help for more detail.
