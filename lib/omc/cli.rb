@@ -9,6 +9,7 @@ module Omc
     class_option :account, aliases: '-a'
     class_option :layer, aliases: '-l'
     class_option :forward_agent, aliases: "-A", type: :boolean, default: false
+    class_option :remote_forward, aliases: "-R", type: :string, default: nil
 
     desc 'ssh STACK', 'Connect to an instance on a stack on an account'
     def ssh(stack)
@@ -17,7 +18,8 @@ module Omc
         user,
         stack,
         layer: options[:layer],
-        forward_agent: options[:forward_agent]
+        forward_agent: options[:forward_agent],
+        remote_forward: options[:remote_forward]
       )
       command.ssh
     end
