@@ -26,7 +26,14 @@ module Omc
 
     desc 'ssh_exec STACK COMMAND', 'Connect to an instance on a stack on an account and execute a command'
     def ssh_exec(stack, user_command)
-      command = StackCommand.new(aws_account, user, stack, layer: options[:layer])
+      command = StackCommand.new(
+        aws_account,
+        user,
+        stack,
+        layer: options[:layer],
+        forward_agent: options[:forward_agent],
+        remote_forward: options[:remote_forward]
+      )
       command.ssh_and_execute user_command
     end
 
