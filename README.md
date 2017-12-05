@@ -9,6 +9,19 @@ Useful commands for dealing with AWS and opsworks across multiple IAM accounts.
 gem install omc
 ```
 
+### Config
+
+omc supports a configuration file to specify your account rather than providing
+it with the `-a` flag. Formatted like so:
+
+```toml
+account = "zerg"
+```
+
+It can be located at `~/.omcrc`, `~/.config/omcrc`, or local to where you're running
+your command `.omcrc`
+
+
 ### AWS Cred Vault
 
 omc works off of [aws_cred_vault](http://www.github.com/cbrunsdon/aws_cred_vault) and requires an ~/.aws_cred_vault file to exist. This file should be populated with your different IAM accounts and users.
