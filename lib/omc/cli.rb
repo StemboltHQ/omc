@@ -1,6 +1,6 @@
 require 'thor'
 require 'aws_cred_vault'
-require 'aws-sdk'
+require 'aws-sdk-v1'
 require "omc/stack_command"
 require "omc/config"
 
